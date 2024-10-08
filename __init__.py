@@ -1,0 +1,1 @@
+from pyrocksegmentation.segmentator import RockImageSegmentator

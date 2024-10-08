@@ -1,1 +1,2 @@
 from pyrocksegmentation.segmentator import Segmentator
+from pyrocksegmentation.extractor import Extractor

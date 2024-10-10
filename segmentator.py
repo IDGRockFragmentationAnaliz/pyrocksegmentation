@@ -24,13 +24,19 @@ class Segmentator:
 		bg = self.get_background()
 		area_marks = self.closes2segment(255 - bg)
 
+		# fig = plt.figure(figsize=(14, 9))
+		# axs = [fig.add_subplot(3, 1, 1),
+		#        fig.add_subplot(3, 1, 2),
+		#        fig.add_subplot(3, 1, 3)]
+		# axs[0].imshow(self.edges_weighted)
+		# axs[1].imshow(bg)
+		# axs[2].imshow(area_marks)
+		# plt.show()
+
 		area_marks[area_marks == -1] = 0
 		area_marks[area_marks == 1] = 0
 		area_marks = cv2.watershed(self.image, area_marks)
 		return area_marks
 
-		# fig = plt.figure(figsize=(14, 9))
-		# axs = [fig.add_subplot(1, 1, 1)]
-		# axs[0].imshow(area_marks)
-		# plt.show()
+
 

@@ -6,6 +6,8 @@ from matplotlib import pyplot as plt
 class Segmentator:
 	def __init__(self, image=None, edges_weighted=None):
 		self.image = image
+		self.area_marks = None
+		self.background = None
 		self.edges_weighted = edges_weighted
 
 	def get_background(self):
@@ -17,26 +19,28 @@ class Segmentator:
 		if background is None:
 			background = self.background
 		_, area_marks = cv2.connectedComponents(background)
-		area_marks = area_marks + 1
-		return area_marks
+		self.area_marks = area_marks + 1
+		return self.area_marks
+
+	def get_segment_image(self):
+		print(1)
+		values = np.unique(self.area_marks)
+		red, green, blue = {}, {}, {}
+		for value in values:
+			red[value] = np.random.randint(0, 255)
+			green[value] = np.random.randint(0, 255)
+			blue[value] = np.random.randint(0, 255)
+		fun = np.vectorize(lambda x: (red[x], green[x], blue[x]))
+		return cv2.merge(fun(self.area_marks))
+
 
 	def run(self):
-		bg = self.get_background()
-		area_marks = self.closes2segment(255 - bg)
-
-		# fig = plt.figure(figsize=(14, 9))
-		# axs = [fig.add_subplot(3, 1, 1),
-		#        fig.add_subplot(3, 1, 2),
-		#        fig.add_subplot(3, 1, 3)]
-		# axs[0].imshow(self.edges_weighted)
-		# axs[1].imshow(bg)
-		# axs[2].imshow(area_marks)
-		# plt.show()
-
-		area_marks[area_marks == -1] = 0
-		area_marks[area_marks == 1] = 0
-		area_marks = cv2.watershed(self.image, area_marks)
-		return area_marks
+		self.background = self.get_background()
+		self.area_marks = self.closes2segment(255 - self.background)
+		self.area_marks[self.area_marks == -1] = 0
+		self.area_marks[self.area_marks == 1] = 0
+		self.area_marks = cv2.watershed(self.image, self.area_marks)
+		return self.area_marks
 
 
 

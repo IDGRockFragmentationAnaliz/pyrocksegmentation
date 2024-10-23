@@ -15,7 +15,6 @@ class Segmentator:
 	def get_edges(self):
 		if self.edges is not None:
 			return self.edges
-
 		result = np.uint8((self.edges_weighted / self.edges_weighted.max()) * 255)
 		_, self.edges = cv2.threshold(result, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 		return self.edges
@@ -34,7 +33,6 @@ class Segmentator:
 		return self.area_marks
 
 	def get_segment_image(self):
-		print(1)
 		values = np.unique(self.area_marks)
 		red, green, blue = {}, {}, {}
 		for value in values:
@@ -55,35 +53,28 @@ class Segmentator:
 			else:
 				edge_to_clean[num_edge] = 255
 		self.edges = (np.vectorize(lambda x: edge_to_clean[x])(edges_connected)).astype(np.uint8)
-		print(self.edges)
 
 	def run(self):
 		kernel = np.ones((10, 10), np.uint8)
 		self.edges = cv2.dilate(self.get_edges(), kernel, iterations=1)
-		self.remove_tiny_edges()
+		#self.remove_tiny_edges()
 		self.background = self.get_background()
 
-		dt = cv2.distanceTransform(self.background, cv2.DIST_L2, 5)
-		data_max = filters.maximum_filter(dt, 100)
-		maxima = ((dt == data_max)*255).astype(np.uint8)
-		maxima = cv2.dilate(maxima, kernel, iterations=1)
-		self.area_marks = self.closes2segment(maxima)
-
+		# dt = cv2.distanceTransform(self.background, cv2.DIST_L2, 5)
+		# data_max = filters.maximum_filter(dt, 100)
+		# maxima = ((dt == data_max)*255).astype(np.uint8)
+		# maxima = cv2.dilate(maxima, kernel, iterations=1)
+		# self.area_marks = self.closes2segment(maxima)
 		#return maxima + self.edges
-		#self.area_marks = self.closes2segment(self.background)
+
+		self.area_marks = self.closes2segment(self.background)
 		self.area_marks[self.area_marks == -1] = 0
 		self.area_marks[self.area_marks == 1] = 0
-		self.area_marks[self.edges == 255] = 1
+		#self.area_marks[self.edges == 255] = 1
+		img = cv2.merge((self.edges, self.edges, self.edges))
+		#self.area_marks = cv2.watershed(img, self.area_marks)
 		self.area_marks = cv2.watershed(self.image, self.area_marks)
-		self.area_marks[self.area_marks == -1] = 0
-		self.area_marks[self.area_marks == 1] = 0
-		self.area_marks[self.edges == 255] = 1
-		self.area_marks = cv2.watershed(self.image, self.area_marks)
-		self.area_marks[self.area_marks == -1] = 0
-		self.area_marks[self.area_marks == 1] = 0
-		self.area_marks[self.edges == 255] = 1
-		self.area_marks = cv2.watershed(self.image*0, self.area_marks)
-		return self.area_marks + self.edges
+		return self.area_marks
 
 
 

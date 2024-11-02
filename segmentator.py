@@ -60,20 +60,19 @@ class Segmentator:
 		#self.remove_tiny_edges()
 		self.background = self.get_background()
 
-		# dt = cv2.distanceTransform(self.background, cv2.DIST_L2, 5)
-		# data_max = filters.maximum_filter(dt, 100)
-		# maxima = ((dt == data_max)*255).astype(np.uint8)
-		# maxima = cv2.dilate(maxima, kernel, iterations=1)
-		# self.area_marks = self.closes2segment(maxima)
+		dt = cv2.distanceTransform(self.background, cv2.DIST_L2, 5)
+		data_max = filters.maximum_filter(dt, 200)
+		maxima = ((dt == data_max)*255).astype(np.uint8)
+		maxima = cv2.dilate(maxima, kernel, iterations=1)
+		self.area_marks = self.closes2segment(maxima)
 		#return maxima + self.edges
 
-		self.area_marks = self.closes2segment(self.background)
+		#self.area_marks = self.closes2segment(self.background)
 		self.area_marks[self.area_marks == -1] = 0
 		self.area_marks[self.area_marks == 1] = 0
-		#self.area_marks[self.edges == 255] = 1
+		self.area_marks[self.edges == 255] = 1
 		img = cv2.merge((self.edges, self.edges, self.edges))
-		#self.area_marks = cv2.watershed(img, self.area_marks)
-		self.area_marks = cv2.watershed(self.image, self.area_marks)
+		self.area_marks = cv2.watershed(img, self.area_marks)
 		return self.area_marks
 
 

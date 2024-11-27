@@ -22,6 +22,7 @@ class Segmentator:
 	def closes2segment(self, background=None):
 		if background is None:
 			background = self.get_background()
+		print(background)
 		_, area_marks = cv2.connectedComponents(background)
 		self.area_marks = area_marks + 1
 		return self.area_marks

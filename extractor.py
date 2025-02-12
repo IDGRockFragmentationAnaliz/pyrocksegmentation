@@ -21,18 +21,13 @@ class Extractor:
         x = x.flatten()[array_flat_sorted_indices]
         y = y.flatten()[array_flat_sorted_indices]
 
-        test = [_x for _x in x if _x < 0]
-
         centers = np.zeros((len(unique)-indent, 2))
 
         for i in range(indent, len(unique)):
             x_shape = x[first[i]:first[i] + count[i]]
             y_shape = y[first[i]:first[i] + count[i]]
-            x_center = np.sum(x_shape/len(x_shape))
-            y_center = np.sum(y_shape/len(y_shape))
-            if x_center < 0:
-                print(i,x_shape, np.sum(x_shape))
-                print(x_center)
+            x_center = np.mean(x_shape)
+            y_center = np.mean(y_shape)
             center = np.array((x_center, y_center))
             centers[i-indent] = center
 

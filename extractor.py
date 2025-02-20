@@ -31,7 +31,7 @@ class Extractor:
             center = np.array((x_center, y_center))
             centers[i-indent] = center
 
-        return unique[indent:], centers
+        return count[indent:], centers
 
     def extruct_areas(self):
         unique, counts = np.unique(self.marked_ares, return_counts=True)

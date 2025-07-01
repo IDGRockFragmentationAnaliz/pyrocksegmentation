@@ -30,9 +30,9 @@ class Segmentator:
 		values = np.unique(self.area_marks)
 		red, green, blue = {}, {}, {}
 		for value in values:
-			red[value] = np.random.randint(0, 255)
-			green[value] = np.random.randint(0, 255)
-			blue[value] = np.random.randint(0, 255)
+			red[value] = np.random.randint(0, 255, dtype=np.uint8)
+			green[value] = np.random.randint(0, 255, dtype=np.uint8)
+			blue[value] = np.random.randint(0, 255, dtype=np.uint8)
 		fun = np.vectorize(lambda x: (red[x], green[x], blue[x]))
 		return cv2.merge(fun(self.area_marks))
 
